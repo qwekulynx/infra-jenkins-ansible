@@ -1,3 +1,0 @@
-ami_id: ami-00ca32bbc84273381   # set a valid AMI for your region (Amazon Linux 2023)
-key_name: Devops2025  # must exist in AWS or be created elsewhere
-

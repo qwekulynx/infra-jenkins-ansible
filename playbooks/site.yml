@@ -1,0 +1,56 @@
+---
+- name: Provision AWS EC2 instances
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    security_group_name: "{{ security_group_name | default('infra-sg') }}"
+    region: "{{ region | default('us-east-1') }}"
+    instance_type: "{{ instance_type | default('t3.micro') }}"
+    instance_count: "{{ instance_count | default(1) }}"
+    ami: "{{ ami | default('ami-0c02fb55956c7d316') }}"
+    key_name: "{{ key_name | default('Devops2025') }}"
+    key_file: "{{ key_file | default('~/.ssh/Devops2025') }}"
+    tag_name: "{{ tag_name | default('jenkins-test') }}"
+
+  tasks:
+    - name: Ensure boto3 is installed
+      pip:
+        name: boto3
+        state: present
+
+    - name: Create security group (allow SSH and HTTP)
+      amazon.aws.ec2_group:
+        name: "{{ security_group_name }}"
+        description: "Security group for Jenkins-Ansible"
+        region: "{{ region }}"
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+        state: present
+      register: sg_result
+
+    - name: Launch EC2 instance(s)
+      amazon.aws.ec2_instance:
+        name: "{{ tag_name }}"
+        key_name: "{{ key_name }}"
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami }}"
+        wait: yes
+        count: "{{ instance_count }}"
+        region: "{{ region }}"
+        security_groups:
+          - "{{ security_group_name }}"
+      register: ec2
+
+    - name: Show EC2 instance info
+      debug:
+        var: ec2
+
