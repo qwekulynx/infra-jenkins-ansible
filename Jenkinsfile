@@ -1,27 +1,4 @@
-pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master',
-                    credentialsId: 'GitHubID',
-                    url: 'https://github.com/qwekulynx/infra-jenkins-ansible.git'
-            }
-        }
-
-        stage('Run Ansible Playbook') {
-            steps {
-                sshagent(credentials: ['AnsibleSSHKey']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.121 "
-                          cd /home/ec2-user/infra-jenkins-ansible &&
-                          ansible-playbook -i inventories/aws_ec2.yml playbooks/provision.yml
-                        "
-                    '''
-                }
-            }
-        }
-    }
+sshagent (credentials: ['ansibleID']) {
+    sh 'ansible-playbook -i inventory site.yml'
 }
 
