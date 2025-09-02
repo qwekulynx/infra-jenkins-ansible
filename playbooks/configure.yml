@@ -1,0 +1,20 @@
+---
+- name: Configure instances
+  hosts: tag_Environment_{{ env | default('dev') }}
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Ensure basic packages
+      ansible.builtin.package:
+        name:
+          - git
+          - curl
+          - htop
+        state: present
+
+    - name: Create dev user
+      ansible.builtin.user:
+        name: devops
+        state: present
+        groups: wheel
+

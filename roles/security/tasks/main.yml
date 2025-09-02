@@ -1,0 +1,15 @@
+---
+- name: Create security group
+  amazon.aws.ec2_group:
+    name: "{{ project_name }}-{{ env }}-sg"
+    description: "Allow SSH and HTTP"
+    vpc_id: "{{ vpc.vpc.id }}"
+    rules:
+      - proto: tcp
+        ports: [22, 80]
+        cidr_ip: 0.0.0.0/0
+    tags:
+      Name: "{{ project_name }}-{{ env }}-sg"
+      Environment: "{{ env }}"
+  register: sg
+
