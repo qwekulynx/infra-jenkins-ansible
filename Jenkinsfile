@@ -1,22 +1,9 @@
-pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master',
-                    credentialsId: 'GitHubID',
-                    url: 'https://github.com/qwekulynx/infra-jenkins-ansible.git'
-            }
-        }
-
-        stage('Run Ansible Playbook') {
-            steps {
-                sh '''
-                ansible-playbook -i inventory/hosts playbook.yml
-                '''
-            }
-        }
+stage('Run Ansible Playbook') {
+    steps {
+        sh '''
+          ssh -o StrictHostKeyChecking=no ansible@172.31.45.121 \
+          "cd /path/to/project && ansible-playbook -i inventory/hosts playbook.yml"
+        '''
     }
 }
 
