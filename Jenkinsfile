@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'git@github.com:qwekulynx/infra-jenkins-ansible.git'
+                    url: 'https://github.com:qwekulynx/infra-jenkins-ansible.git'
             }
         }
 
