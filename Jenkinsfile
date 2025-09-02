@@ -4,21 +4,17 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com:qwekulynx/infra-jenkins-ansible.git'
+                git branch: 'master',
+                    credentialsId: 'GitHubID',
+                    url: 'https://github.com/qwekulynx/infra-jenkins-ansible.git'
             }
         }
 
         stage('Run Ansible Playbook') {
             steps {
-                sshagent(['ansible-ssh-key']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.121 "
-                        cd /home/ec2-user/infra-jenkins-ansible &&
-                        ansible-playbook -i inventory site.yml
-                        "
-                    '''
-                }
+                sh '''
+                ansible-playbook -i inventory/hosts playbook.yml
+                '''
             }
         }
     }
